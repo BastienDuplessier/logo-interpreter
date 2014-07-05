@@ -29,9 +29,12 @@ char_to_int(_) -> 0.
 string_to_token(String) ->
     string_to_token(String, reserved_word(String)).
 string_to_token(String, true) ->
-    {keyword, String};
+    {keyword, convert_keyword(String)};
 string_to_token(String, false) ->
     {symbol, String}.
+
+convert_keyword(String) ->
+    list_to_atom(string:to_lower(String)).
 
 reserved_word("AV") -> true;
 reserved_word("TD") -> true;
@@ -307,7 +310,7 @@ yysuf(List, N) -> lists:nthtail(N, List).
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/home/zangther/prog/logo-interpreter/logoscanner.erl", 309).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.erl", 312).
 yystate() -> 6.
 
 yystate(7, Ics, Line, Tlen, _, _) ->
