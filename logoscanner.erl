@@ -12,9 +12,7 @@
 -export([format_error/1]).
 
 %% User code. This is placed here to allow extra attributes.
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 11).
-
--export([string_to_int/1, char_to_int/1]).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 13).
 
 string_to_int(String) ->
     string_to_int(String, 0).
@@ -27,6 +25,27 @@ string_to_int([], Value) -> Value.
 char_to_int(Char) when Char >= $0, Char =< $9 ->
     Char - $0;
 char_to_int(_) -> 0.
+
+string_to_token(String) ->
+    string_to_token(String, reserved_word(String)).
+string_to_token(String, true) ->
+    {keyword, String};
+string_to_token(String, false) ->
+    {symbol, String}.
+
+reserved_word("AV") -> true;
+reserved_word("TD") -> true;
+reserved_word("TG") -> true;
+reserved_word("REC") -> true;
+reserved_word("FPOS") -> true;
+reserved_word("FCAP") -> true;
+reserved_word("VE") -> true;
+reserved_word("MT") -> true;
+reserved_word("CT") -> true;
+reserved_word("LC") -> true;
+reserved_word("BC") -> true;
+reserved_word("FCC") -> true;
+reserved_word(_) -> false.
 
 -file("/usr/lib/erlang/lib/parsetools-2.0.7/include/leexinc.hrl", 14).
 
@@ -288,19 +307,33 @@ yysuf(List, N) -> lists:nthtail(N, List).
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/home/zangther/prog/logo-interpreter/logoscanner.erl", 290).
-yystate() -> 4.
+-file("/home/zangther/prog/logo-interpreter/logoscanner.erl", 309).
+yystate() -> 6.
 
+yystate(7, Ics, Line, Tlen, _, _) ->
+    {3,Tlen,Ics,Line};
+yystate(6, [48|Ics], Line, Tlen, Action, Alen) ->
+    yystate(0, Ics, Line, Tlen+1, Action, Alen);
+yystate(6, [45|Ics], Line, Tlen, Action, Alen) ->
+    yystate(1, Ics, Line, Tlen+1, Action, Alen);
+yystate(6, [32|Ics], Line, Tlen, Action, Alen) ->
+    yystate(7, Ics, Line, Tlen+1, Action, Alen);
+yystate(6, [C|Ics], Line, Tlen, Action, Alen) when C >= 49, C =< 57 ->
+    yystate(2, Ics, Line, Tlen+1, Action, Alen);
+yystate(6, [C|Ics], Line, Tlen, Action, Alen) when C >= 65, C =< 90 ->
+    yystate(4, Ics, Line, Tlen+1, Action, Alen);
+yystate(6, [C|Ics], Line, Tlen, Action, Alen) when C >= 97, C =< 122 ->
+    yystate(4, Ics, Line, Tlen+1, Action, Alen);
+yystate(6, Ics, Line, Tlen, Action, Alen) ->
+    {Action,Alen,Tlen,Ics,Line,6};
 yystate(5, Ics, Line, Tlen, _, _) ->
     {1,Tlen,Ics,Line};
-yystate(4, [48|Ics], Line, Tlen, Action, Alen) ->
-    yystate(0, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [45|Ics], Line, Tlen, Action, Alen) ->
-    yystate(1, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 49, C =< 57 ->
-    yystate(2, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, Ics, Line, Tlen, Action, Alen) ->
-    {Action,Alen,Tlen,Ics,Line,4};
+yystate(4, [C|Ics], Line, Tlen, _, _) when C >= 65, C =< 90 ->
+    yystate(4, Ics, Line, Tlen+1, 2, Tlen);
+yystate(4, [C|Ics], Line, Tlen, _, _) when C >= 97, C =< 122 ->
+    yystate(4, Ics, Line, Tlen+1, 2, Tlen);
+yystate(4, Ics, Line, Tlen, _, _) ->
+    {2,Tlen,Ics,Line,4};
 yystate(3, [48|Ics], Line, Tlen, _, _) ->
     yystate(5, Ics, Line, Tlen+1, 1, Tlen);
 yystate(3, [C|Ics], Line, Tlen, _, _) when C >= 49, C =< 57 ->
@@ -334,6 +367,11 @@ yyaction(0, TokenLen, YYtcs, _) ->
 yyaction(1, TokenLen, YYtcs, _) ->
     TokenChars = yypre(YYtcs, TokenLen),
     yyaction_1(TokenChars);
+yyaction(2, TokenLen, YYtcs, _) ->
+    TokenChars = yypre(YYtcs, TokenLen),
+    yyaction_2(TokenChars);
+yyaction(3, _, _, _) ->
+    yyaction_3();
 yyaction(_, _, _, _) -> error.
 
 -compile({inline,yyaction_0/1}).
@@ -345,5 +383,15 @@ yyaction_0(TokenChars) ->
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 7).
 yyaction_1(TokenChars) ->
      { token, { int, 0 - string_to_int (TokenChars) } } .
+
+-compile({inline,yyaction_2/1}).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 8).
+yyaction_2(TokenChars) ->
+     { token, string_to_token (TokenChars) } .
+
+-compile({inline,yyaction_3/0}).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 9).
+yyaction_3() ->
+     skip_token .
 
 -file("/usr/lib/erlang/lib/parsetools-2.0.7/include/leexinc.hrl", 282).
