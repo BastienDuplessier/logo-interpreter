@@ -8,7 +8,7 @@ Rules.
 {INT} : {token, {int, string_to_int(TokenChars)}}.
 -{INT} : {token, {int, 0 - string_to_int(TokenChars)}}.
 {SYMBOL} : {token, string_to_token(TokenChars)}.
-\s : skip_token.
+[\s\n\r] : skip_token.
 
 Erlang code.
 
