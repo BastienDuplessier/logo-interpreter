@@ -1,6 +1,6 @@
 Definitions.
 
-INT = [1-9]*[0-9]
+INT = [1-9]?[0-9]+
 SYMBOL = [A-Za-z]+
 
 Rules.
