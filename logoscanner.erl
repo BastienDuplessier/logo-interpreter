@@ -27,7 +27,7 @@ char_to_int(Char) when Char >= $0, Char =< $9 ->
 char_to_int(_) -> 0.
 
 string_to_token(String) ->
-    string_to_token(String, reserved_word(String)).
+    string_to_token(String, basic_command(String)).
 string_to_token(String, true) ->
     {keyword, convert_keyword(String)};
 string_to_token(String, false) ->
@@ -36,19 +36,19 @@ string_to_token(String, false) ->
 convert_keyword(String) ->
     list_to_atom(string:to_lower(String)).
 
-reserved_word("AV") -> true;
-reserved_word("TD") -> true;
-reserved_word("TG") -> true;
-reserved_word("REC") -> true;
-reserved_word("FPOS") -> true;
-reserved_word("FCAP") -> true;
-reserved_word("VE") -> true;
-reserved_word("MT") -> true;
-reserved_word("CT") -> true;
-reserved_word("LC") -> true;
-reserved_word("BC") -> true;
-reserved_word("FCC") -> true;
-reserved_word(_) -> false.
+basic_command("AV") -> true;
+basic_command("TD") -> true;
+basic_command("TG") -> true;
+basic_command("REC") -> true;
+basic_command("FPOS") -> true;
+basic_command("FCAP") -> true;
+basic_command("VE") -> true;
+basic_command("MT") -> true;
+basic_command("CT") -> true;
+basic_command("LC") -> true;
+basic_command("BC") -> true;
+basic_command("FCC") -> true;
+basic_command(_) -> false.
 
 -file("/usr/lib/erlang/lib/parsetools-2.0.7/include/leexinc.hrl", 14).
 
