@@ -1,5 +1,5 @@
 Nonterminals instructions instruction arguments argument_list a_expr.
-Terminals keyword int open_bracket close_bracket plus minus multiply divide.
+Terminals keyword int open_bracket close_bracket plus minus multiply divide open_parent close_parent.
 Rootsymbol instructions.
 
 Left 200 plus minus.
@@ -22,6 +22,7 @@ a_expr -> a_expr minus a_expr : {'$2', '$1', '$3'}.
 a_expr -> a_expr multiply a_expr : {'$2', '$1', '$3'}.
 a_expr -> a_expr divide a_expr : {'$2', '$1', '$3'}.
 a_expr -> int : '$1'.
+a_expr -> open_parent a_expr close_parent : '$2'.
 
 Erlang code.
 value_of({_, Value}) -> Value.
