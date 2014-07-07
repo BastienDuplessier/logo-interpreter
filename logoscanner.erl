@@ -12,7 +12,7 @@
 -export([format_error/1]).
 
 %% User code. This is placed here to allow extra attributes.
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 16).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 18).
 
 string_to_int(String) ->
     string_to_int(String, 0).
@@ -35,6 +35,11 @@ string_to_token(String, false) ->
 
 convert_keyword(String) ->
     list_to_atom(string:to_lower(String)).
+
+string_to_operator("+") -> plus;
+string_to_operator("-") -> minus;
+string_to_operator("*") -> multiply;
+string_to_operator("/") -> divide.
 
 basic_command("AV") -> true;
 basic_command("TD") -> true;
@@ -310,57 +315,65 @@ yysuf(List, N) -> lists:nthtail(N, List).
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("/home/zangther/prog/logo-interpreter/logoscanner.erl", 312).
-yystate() -> 4.
+-file("/home/zangther/prog/logo-interpreter/logoscanner.erl", 317).
+yystate() -> 5.
 
-yystate(7, [C|Ics], Line, Tlen, _, _) when C >= 65, C =< 90 ->
-    yystate(7, Ics, Line, Tlen+1, 2, Tlen);
-yystate(7, [C|Ics], Line, Tlen, _, _) when C >= 97, C =< 122 ->
-    yystate(7, Ics, Line, Tlen+1, 2, Tlen);
+yystate(8, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
+    yystate(8, Ics, Line, Tlen+1, 0, Tlen);
+yystate(8, Ics, Line, Tlen, _, _) ->
+    {0,Tlen,Ics,Line,8};
 yystate(7, Ics, Line, Tlen, _, _) ->
-    {2,Tlen,Ics,Line,7};
+    {6,Tlen,Ics,Line};
+yystate(6, [C|Ics], Line, Tlen, _, _) when C >= 65, C =< 90 ->
+    yystate(6, Ics, Line, Tlen+1, 2, Tlen);
+yystate(6, [C|Ics], Line, Tlen, _, _) when C >= 97, C =< 122 ->
+    yystate(6, Ics, Line, Tlen+1, 2, Tlen);
 yystate(6, Ics, Line, Tlen, _, _) ->
-    {5,Tlen,Ics,Line};
-yystate(5, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
-    yystate(5, Ics, Line, Tlen+1, 0, Tlen);
-yystate(5, Ics, Line, Tlen, _, _) ->
-    {0,Tlen,Ics,Line,5};
-yystate(4, [93|Ics], Line, Tlen, Action, Alen) ->
-    yystate(0, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [91|Ics], Line, Tlen, Action, Alen) ->
-    yystate(3, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [48|Ics], Line, Tlen, Action, Alen) ->
-    yystate(5, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [45|Ics], Line, Tlen, Action, Alen) ->
+    {2,Tlen,Ics,Line,6};
+yystate(5, [93|Ics], Line, Tlen, Action, Alen) ->
     yystate(1, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [32|Ics], Line, Tlen, Action, Alen) ->
-    yystate(6, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [13|Ics], Line, Tlen, Action, Alen) ->
-    yystate(6, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [10|Ics], Line, Tlen, Action, Alen) ->
-    yystate(6, Ics, Line+1, Tlen+1, Action, Alen);
-yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 49, C =< 57 ->
-    yystate(5, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 65, C =< 90 ->
+yystate(5, [92|Ics], Line, Tlen, Action, Alen) ->
+    yystate(3, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [91|Ics], Line, Tlen, Action, Alen) ->
+    yystate(2, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [48|Ics], Line, Tlen, Action, Alen) ->
+    yystate(8, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [45|Ics], Line, Tlen, Action, Alen) ->
+    yystate(4, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [42|Ics], Line, Tlen, Action, Alen) ->
+    yystate(3, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [43|Ics], Line, Tlen, Action, Alen) ->
+    yystate(3, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [32|Ics], Line, Tlen, Action, Alen) ->
     yystate(7, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, [C|Ics], Line, Tlen, Action, Alen) when C >= 97, C =< 122 ->
+yystate(5, [13|Ics], Line, Tlen, Action, Alen) ->
     yystate(7, Ics, Line, Tlen+1, Action, Alen);
-yystate(4, Ics, Line, Tlen, Action, Alen) ->
-    {Action,Alen,Tlen,Ics,Line,4};
+yystate(5, [10|Ics], Line, Tlen, Action, Alen) ->
+    yystate(7, Ics, Line+1, Tlen+1, Action, Alen);
+yystate(5, [C|Ics], Line, Tlen, Action, Alen) when C >= 49, C =< 57 ->
+    yystate(8, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [C|Ics], Line, Tlen, Action, Alen) when C >= 65, C =< 90 ->
+    yystate(6, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, [C|Ics], Line, Tlen, Action, Alen) when C >= 97, C =< 122 ->
+    yystate(6, Ics, Line, Tlen+1, Action, Alen);
+yystate(5, Ics, Line, Tlen, Action, Alen) ->
+    {Action,Alen,Tlen,Ics,Line,5};
+yystate(4, [48|Ics], Line, Tlen, _, _) ->
+    yystate(0, Ics, Line, Tlen+1, 5, Tlen);
+yystate(4, [C|Ics], Line, Tlen, _, _) when C >= 49, C =< 57 ->
+    yystate(0, Ics, Line, Tlen+1, 5, Tlen);
+yystate(4, Ics, Line, Tlen, _, _) ->
+    {5,Tlen,Ics,Line,4};
 yystate(3, Ics, Line, Tlen, _, _) ->
-    {3,Tlen,Ics,Line};
-yystate(2, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
-    yystate(2, Ics, Line, Tlen+1, 1, Tlen);
+    {5,Tlen,Ics,Line};
 yystate(2, Ics, Line, Tlen, _, _) ->
-    {1,Tlen,Ics,Line,2};
-yystate(1, [48|Ics], Line, Tlen, Action, Alen) ->
-    yystate(2, Ics, Line, Tlen+1, Action, Alen);
-yystate(1, [C|Ics], Line, Tlen, Action, Alen) when C >= 49, C =< 57 ->
-    yystate(2, Ics, Line, Tlen+1, Action, Alen);
-yystate(1, Ics, Line, Tlen, Action, Alen) ->
-    {Action,Alen,Tlen,Ics,Line,1};
-yystate(0, Ics, Line, Tlen, _, _) ->
+    {3,Tlen,Ics,Line};
+yystate(1, Ics, Line, Tlen, _, _) ->
     {4,Tlen,Ics,Line};
+yystate(0, [C|Ics], Line, Tlen, _, _) when C >= 48, C =< 57 ->
+    yystate(0, Ics, Line, Tlen+1, 1, Tlen);
+yystate(0, Ics, Line, Tlen, _, _) ->
+    {1,Tlen,Ics,Line,0};
 yystate(S, Ics, Line, Tlen, Action, Alen) ->
     {Action,Alen,Tlen,Ics,Line,S}.
 
@@ -381,38 +394,46 @@ yyaction(3, _, _, _) ->
     yyaction_3();
 yyaction(4, _, _, _) ->
     yyaction_4();
-yyaction(5, _, _, _) ->
-    yyaction_5();
+yyaction(5, TokenLen, YYtcs, _) ->
+    TokenChars = yypre(YYtcs, TokenLen),
+    yyaction_5(TokenChars);
+yyaction(6, _, _, _) ->
+    yyaction_6();
 yyaction(_, _, _, _) -> error.
 
 -compile({inline,yyaction_0/1}).
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 6).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 7).
 yyaction_0(TokenChars) ->
      { token, { int, string_to_int (TokenChars) } } .
 
 -compile({inline,yyaction_1/1}).
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 7).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 8).
 yyaction_1(TokenChars) ->
      { token, { int, 0 - string_to_int (TokenChars) } } .
 
 -compile({inline,yyaction_2/1}).
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 8).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 9).
 yyaction_2(TokenChars) ->
      { token, string_to_token (TokenChars) } .
 
 -compile({inline,yyaction_3/0}).
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 10).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 11).
 yyaction_3() ->
      { token, { open_bracket } } .
 
 -compile({inline,yyaction_4/0}).
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 11).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 12).
 yyaction_4() ->
      { token, { close_bracket } } .
 
--compile({inline,yyaction_5/0}).
--file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 12).
-yyaction_5() ->
+-compile({inline,yyaction_5/1}).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 13).
+yyaction_5(TokenChars) ->
+     { token, { string_to_operator (TokenChars) } } .
+
+-compile({inline,yyaction_6/0}).
+-file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 14).
+yyaction_6() ->
      skip_token .
 
 -file("/usr/lib/erlang/lib/parsetools-2.0.7/include/leexinc.hrl", 282).

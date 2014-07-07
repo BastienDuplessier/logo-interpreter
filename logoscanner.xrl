@@ -2,6 +2,7 @@ Definitions.
 
 INT = [1-9]?[0-9]+
 SYMBOL = [A-Za-z]+
+OPERATOR = [\+\-\*\\]
 
 Rules.
 
@@ -11,6 +12,7 @@ Rules.
 
 \[ : {token, {open_bracket}}.
 \] : {token, {close_bracket}}.
+{OPERATOR} : {token, {string_to_operator(TokenChars)}}.
 [\s\n\r] : skip_token.
 
 Erlang code.
@@ -36,6 +38,11 @@ string_to_token(String, false) ->
 
 convert_keyword(String) ->
     list_to_atom(string:to_lower(String)).
+
+string_to_operator("+") -> plus;
+string_to_operator("-") -> minus;
+string_to_operator("*") -> multiply;
+string_to_operator("/") -> divide.
 
 basic_command("AV") -> true;
 basic_command("TD") -> true;
