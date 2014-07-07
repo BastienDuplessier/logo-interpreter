@@ -12,6 +12,8 @@ Rules.
 
 \[ : {token, {open_bracket}}.
 \] : {token, {close_bracket}}.
+\( : {token, {open_parent}}.
+\) : {token, {close_parent}}.
 {OPERATOR} : {token, {string_to_operator(TokenChars)}}.
 [\s\n\r] : skip_token.
 
