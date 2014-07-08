@@ -1,7 +1,8 @@
 -module(logofakedrawer).
--export([av/1, td/1, tg/1, rec/1, fpos/1, fcap/1, ve/1,
+-export([do/2, av/1, td/1, tg/1, rec/1, fpos/1, fcap/1, ve/1,
 	 mt/1, ct/1, lc/1, bc/1, fcc/1]).
 
+do(Symbol, ArgumentList) -> logofakedrawer:Symbol(ArgumentList).
 % Basic commands
 av([X]) ->
     io:format("Going Forward - ~p !\n", [X]).
