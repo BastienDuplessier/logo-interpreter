@@ -3,8 +3,11 @@ Definitions.
 INT = [1-9]?[0-9]+
 SYMBOL = [A-Za-z]+
 OPERATOR = [\+\-\*\/]
+COMMENT = //[\sA-Za-z]+
 
 Rules.
+
+{COMMENT} : skip_token.
 
 {INT} : {token, {int, string_to_int(TokenChars)}}.
 -{INT} : {token, {int, 0 - string_to_int(TokenChars)}}.
@@ -15,6 +18,7 @@ Rules.
 \( : {token, {open_parent}}.
 \) : {token, {close_parent}}.
 {OPERATOR} : {token, {string_to_operator(TokenChars)}}.
+
 [\s\n\r] : skip_token.
 
 Erlang code.
