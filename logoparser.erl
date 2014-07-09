@@ -2,6 +2,7 @@
 -export([parse/1, parse_and_scan/1, format_error/1]).
 -file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 27).
 value_of({_, _, Value}) -> Value.
+symbol_of({Symbol, _}) -> Symbol.
 
 -file("/usr/lib/erlang/lib/parsetools-2.0.7/include/yeccpre.hrl", 0).
 %%
@@ -187,7 +188,7 @@ yecctoken2string(Other) ->
 
 
 
--file("/home/zangther/prog/logo-interpreter/logoparser.erl", 190).
+-file("/home/zangther/prog/logo-interpreter/logoparser.erl", 191).
 
 yeccpars2(0=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_0(S, Cat, Ss, Stack, T, Ts, Tzr);
@@ -505,7 +506,7 @@ yeccpars2_10_(__Stack0) ->
 yeccpars2_15_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { __2 , __1 , __3 }
+   { symbol_of ( __2 ) , { __1 , __3 } }
   end | __Stack].
 
 -compile({inline,yeccpars2_16_/1}).
@@ -513,7 +514,7 @@ yeccpars2_15_(__Stack0) ->
 yeccpars2_16_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { __2 , __1 , __3 }
+   { symbol_of ( __2 ) , { __1 , __3 } }
   end | __Stack].
 
 -compile({inline,yeccpars2_17_/1}).
@@ -521,7 +522,7 @@ yeccpars2_16_(__Stack0) ->
 yeccpars2_17_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { __2 , __1 , __3 }
+   { symbol_of ( __2 ) , { __1 , __3 } }
   end | __Stack].
 
 -compile({inline,yeccpars2_18_/1}).
@@ -529,7 +530,7 @@ yeccpars2_17_(__Stack0) ->
 yeccpars2_18_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { __2 , __1 , __3 }
+   { symbol_of ( __2 ) , { __1 , __3 } }
   end | __Stack].
 
 -compile({inline,yeccpars2_20_/1}).
@@ -571,4 +572,4 @@ yeccpars2_25_(__Stack0) ->
   end | __Stack].
 
 
--file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 29).
+-file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 30).

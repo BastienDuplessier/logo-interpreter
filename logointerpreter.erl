@@ -32,11 +32,11 @@ compute_arguments([H|T], Result) ->
 compute_arguments([], Result) -> Result.
 
 
-compute_aexpr({{Operator}, A, B}) ->
+compute_aexpr({Operator, {A, B}}) ->
     {int, ComputedA} = compute_aexpr(A),
     {int, ComputedB} = compute_aexpr(B),
     {int, trunc(compute(Operator, ComputedA, ComputedB))};
-compute_aexpr(Value) -> Value.
+compute_aexpr({int, _, Value}) -> {int, Value}.
 
 compute(plus, A, B) -> A + B;
 compute(minus, A, B) -> A - B;
