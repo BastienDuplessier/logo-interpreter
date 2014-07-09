@@ -26,12 +26,12 @@ char_to_int(Char) when Char >= $0, Char =< $9 ->
     Char - $0;
 char_to_int(_) -> 0.
 
-string_to_token(String) ->
-    string_to_token(String, basic_command(String)).
-string_to_token(String, true) ->
-    {keyword, convert_keyword(String)};
-string_to_token(String, false) ->
-    {symbol, String}.
+string_to_token(String, TokenLine) ->
+    string_to_token(String, TokenLine, basic_command(String)).
+string_to_token(String, TokenLine, true) ->
+    {keyword, TokenLine, convert_keyword(String)};
+string_to_token(String, TokenLine, false) ->
+    {symbol, TokenLine, String}.
 
 convert_keyword(String) ->
     list_to_atom(string:to_lower(String)).
@@ -411,26 +411,26 @@ yystate(S, Ics, Line, Tlen, Action, Alen) ->
 
 yyaction(0, _, _, _) ->
     yyaction_0();
-yyaction(1, TokenLen, YYtcs, _) ->
+yyaction(1, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
-    yyaction_1(TokenChars);
-yyaction(2, TokenLen, YYtcs, _) ->
+    yyaction_1(TokenChars, TokenLine);
+yyaction(2, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
-    yyaction_2(TokenChars);
-yyaction(3, TokenLen, YYtcs, _) ->
+    yyaction_2(TokenChars, TokenLine);
+yyaction(3, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
-    yyaction_3(TokenChars);
-yyaction(4, _, _, _) ->
-    yyaction_4();
-yyaction(5, _, _, _) ->
-    yyaction_5();
-yyaction(6, _, _, _) ->
-    yyaction_6();
-yyaction(7, _, _, _) ->
-    yyaction_7();
-yyaction(8, TokenLen, YYtcs, _) ->
+    yyaction_3(TokenChars, TokenLine);
+yyaction(4, _, _, TokenLine) ->
+    yyaction_4(TokenLine);
+yyaction(5, _, _, TokenLine) ->
+    yyaction_5(TokenLine);
+yyaction(6, _, _, TokenLine) ->
+    yyaction_6(TokenLine);
+yyaction(7, _, _, TokenLine) ->
+    yyaction_7(TokenLine);
+yyaction(8, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
-    yyaction_8(TokenChars);
+    yyaction_8(TokenChars, TokenLine);
 yyaction(9, _, _, _) ->
     yyaction_9();
 yyaction(_, _, _, _) -> error.
@@ -440,45 +440,45 @@ yyaction(_, _, _, _) -> error.
 yyaction_0() ->
      skip_token .
 
--compile({inline,yyaction_1/1}).
+-compile({inline,yyaction_1/2}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 10).
-yyaction_1(TokenChars) ->
-     { token, { int, string_to_int (TokenChars) } } .
+yyaction_1(TokenChars, TokenLine) ->
+     { token, { int, TokenLine, string_to_int (TokenChars) } } .
 
--compile({inline,yyaction_2/1}).
+-compile({inline,yyaction_2/2}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 11).
-yyaction_2(TokenChars) ->
-     { token, { int, 0 - string_to_int (TokenChars) } } .
+yyaction_2(TokenChars, TokenLine) ->
+     { token, { int, TokenLine, 0 - string_to_int (TokenChars) } } .
 
--compile({inline,yyaction_3/1}).
+-compile({inline,yyaction_3/2}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 12).
-yyaction_3(TokenChars) ->
-     { token, string_to_token (TokenChars) } .
+yyaction_3(TokenChars, TokenLine) ->
+     { token, string_to_token (TokenChars, TokenLine) } .
 
--compile({inline,yyaction_4/0}).
+-compile({inline,yyaction_4/1}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 14).
-yyaction_4() ->
-     { token, { open_bracket } } .
+yyaction_4(TokenLine) ->
+     { token, { open_bracket, TokenLine } } .
 
--compile({inline,yyaction_5/0}).
+-compile({inline,yyaction_5/1}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 15).
-yyaction_5() ->
-     { token, { close_bracket } } .
+yyaction_5(TokenLine) ->
+     { token, { close_bracket, TokenLine } } .
 
--compile({inline,yyaction_6/0}).
+-compile({inline,yyaction_6/1}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 16).
-yyaction_6() ->
-     { token, { open_parent } } .
+yyaction_6(TokenLine) ->
+     { token, { open_parent, TokenLine } } .
 
--compile({inline,yyaction_7/0}).
+-compile({inline,yyaction_7/1}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 17).
-yyaction_7() ->
-     { token, { close_parent } } .
+yyaction_7(TokenLine) ->
+     { token, { close_parent, TokenLine } } .
 
--compile({inline,yyaction_8/1}).
+-compile({inline,yyaction_8/2}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 18).
-yyaction_8(TokenChars) ->
-     { token, { string_to_operator (TokenChars) } } .
+yyaction_8(TokenChars, TokenLine) ->
+     { token, { string_to_operator (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_9/0}).
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 20).

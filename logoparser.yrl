@@ -25,4 +25,4 @@ a_expr -> int : '$1'.
 a_expr -> open_parent a_expr close_parent : '$2'.
 
 Erlang code.
-value_of({_, Value}) -> Value.
+value_of({_, _, Value}) -> Value.

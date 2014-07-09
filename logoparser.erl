@@ -1,7 +1,7 @@
 -module(logoparser).
 -export([parse/1, parse_and_scan/1, format_error/1]).
 -file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 27).
-value_of({_, Value}) -> Value.
+value_of({_, _, Value}) -> Value.
 
 -file("/usr/lib/erlang/lib/parsetools-2.0.7/include/yeccpre.hrl", 0).
 %%

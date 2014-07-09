@@ -9,15 +9,15 @@ Rules.
 
 {COMMENT} : skip_token.
 
-{INT} : {token, {int, string_to_int(TokenChars)}}.
--{INT} : {token, {int, 0 - string_to_int(TokenChars)}}.
-{SYMBOL} : {token, string_to_token(TokenChars)}.
+{INT} : {token, {int, TokenLine, string_to_int(TokenChars)}}.
+-{INT} : {token, {int, TokenLine, 0 - string_to_int(TokenChars)}}.
+{SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
 
-\[ : {token, {open_bracket}}.
-\] : {token, {close_bracket}}.
-\( : {token, {open_parent}}.
-\) : {token, {close_parent}}.
-{OPERATOR} : {token, {string_to_operator(TokenChars)}}.
+\[ : {token, {open_bracket, TokenLine}}.
+\] : {token, {close_bracket, TokenLine}}.
+\( : {token, {open_parent, TokenLine}}.
+\) : {token, {close_parent, TokenLine}}.
+{OPERATOR} : {token, {string_to_operator(TokenChars), TokenLine}}.
 
 [\s\n\r] : skip_token.
 
@@ -35,12 +35,12 @@ char_to_int(Char) when Char >= $0, Char =< $9 ->
     Char - $0;
 char_to_int(_) -> 0.
 
-string_to_token(String) ->
-    string_to_token(String, basic_command(String)).
-string_to_token(String, true) ->
-    {keyword, convert_keyword(String)};
-string_to_token(String, false) ->
-    {symbol, String}.
+string_to_token(String, TokenLine) ->
+    string_to_token(String, TokenLine, basic_command(String)).
+string_to_token(String, TokenLine, true) ->
+    {keyword, TokenLine, convert_keyword(String)};
+string_to_token(String, TokenLine, false) ->
+    {symbol, TokenLine, String}.
 
 convert_keyword(String) ->
     list_to_atom(string:to_lower(String)).
