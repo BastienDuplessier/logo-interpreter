@@ -35,12 +35,12 @@ compute_arguments([], Result) -> Result.
 compute_aexpr({Operator, {A, B}}) ->
     {int, ComputedA} = compute_aexpr(A),
     {int, ComputedB} = compute_aexpr(B),
-    {int, trunc(compute(Operator, ComputedA, ComputedB))};
+    {int, compute(Operator, ComputedA, ComputedB)};
 compute_aexpr({int, _, Value}) -> {int, Value}.
 
 compute(plus, A, B) -> A + B;
 compute(minus, A, B) -> A - B;
 compute(multiply, A, B) -> A * B;
-compute(divide, A, B) -> A / B.
+compute(divide, A, B) -> trunc(A / B).
 
 drawer() -> logofakedrawer.
