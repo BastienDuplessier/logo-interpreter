@@ -4,10 +4,12 @@ INT = [1-9]?[0-9]+
 SYMBOL = [A-Za-z]+
 OPERATOR = [\+\-\*\/]
 COMMENT = //[\sA-Za-z]+
+REPEAT = REPETE
 
 Rules.
 
 {COMMENT} : skip_token.
+{REPEAT} : {token, {repeat, TokenLine}}.
 
 {INT} : {token, {int, TokenLine, string_to_int(TokenChars)}}.
 -{INT} : {token, {int, TokenLine, 0 - string_to_int(TokenChars)}}.

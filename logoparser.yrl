@@ -1,5 +1,5 @@
 Nonterminals instructions instruction arguments argument_list a_expr.
-Terminals keyword int open_bracket close_bracket plus minus multiply divide open_parent close_parent.
+Terminals keyword int open_bracket close_bracket plus minus multiply divide open_parent close_parent repeat.
 Rootsymbol instructions.
 
 Left 200 plus minus.
@@ -9,6 +9,7 @@ instructions -> instruction instructions : ['$1'|'$2'].
 instructions -> '$empty' : [].
 
 instruction -> keyword arguments : {value_of('$1'), '$2'}.
+instruction -> repeat a_expr open_bracket instructions close_bracket : {repeat, '$2', '$4'}.
 
 arguments -> '$empty' : [].
 arguments -> a_expr : ['$1'].
