@@ -17,6 +17,12 @@ run([]) ->
 run(_) -> true.
 
 % Basic commands
+run_instruction({repeat, {int, _, Times}, Instructions}) -> run_instruction({repeat, Times, Instructions});
+run_instruction({repeat, 0, _}) -> true;
+run_instruction({repeat, Times, Instructions}) ->
+    run(Instructions),
+    NewTimes = Times - 1,
+    run_instruction({repeat, NewTimes, Instructions});
 run_instruction({Symbol, ArgumentList}) ->
     ComputedArguments = compute_arguments(ArgumentList),
     Drawer = drawer(),
