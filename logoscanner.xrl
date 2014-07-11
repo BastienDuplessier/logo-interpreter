@@ -5,6 +5,8 @@ SYMBOL = [A-Za-z]+
 OPERATOR = [\+\-\*\/]
 COMMENT = //.+
 REPEAT = REPETE
+RANDOM = HASARD
+ANGLE = CAP
 
 Rules.
 
@@ -13,6 +15,8 @@ Rules.
 
 {INT} : {token, {int, TokenLine, string_to_int(TokenChars)}}.
 -{INT} : {token, {int, TokenLine, 0 - string_to_int(TokenChars)}}.
+{ANGLE} : {token, {angle, TokenLine}}.
+{RANDOM} : {token, {rand, TokenLine}}.
 {SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
 
 \[ : {token, {open_bracket, TokenLine}}.
