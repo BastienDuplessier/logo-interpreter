@@ -3,7 +3,7 @@ Definitions.
 INT = [1-9]?[0-9]+
 SYMBOL = [A-Za-z]+
 OPERATOR = [\+\-\*\/]
-COMMENT = //[\sA-Za-z]+
+COMMENT = //.+
 REPEAT = REPETE
 
 Rules.
