@@ -37,12 +37,18 @@ compute_arguments([H|T], Result) ->
     compute_arguments(T, [Argument|Result]);
 compute_arguments([], Result) -> Result.
 
-
+compute_aexpr({rand, [Expr]}) ->
+    {int, ComputedExpr} = compute_aexpr(Expr),
+    {int, random:uniform(ComputedExpr)};
+compute_aexpr({angle}) ->
+    Drawer = drawer(),
+    Drawer:angle();
+compute_aexpr({int, _, Value}) -> {int, Value};
 compute_aexpr({Operator, {A, B}}) ->
     {int, ComputedA} = compute_aexpr(A),
     {int, ComputedB} = compute_aexpr(B),
-    {int, compute(Operator, ComputedA, ComputedB)};
-compute_aexpr({int, _, Value}) -> {int, Value}.
+    {int, compute(Operator, ComputedA, ComputedB)}.
+
 
 compute(plus, A, B) -> A + B;
 compute(minus, A, B) -> A - B;

@@ -1,6 +1,6 @@
 -module(logofakedrawer).
 -export([do/2, av/1, td/1, tg/1, rec/1, fpos/1, fcap/1, ve/1,
-	 mt/1, ct/1, lc/1, bc/1, fcc/1]).
+	 mt/1, ct/1, lc/1, bc/1, fcc/1, angle/0]).
 
 do(Symbol, ArgumentList) -> logofakedrawer:Symbol(ArgumentList).
 % Basic commands
@@ -28,3 +28,4 @@ bc([]) ->
     io:format("Lower pencil\n").
 fcc([X]) ->
     io:format("Change color to ~p\n", [X]).
+angle() -> 0.
