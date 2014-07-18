@@ -7,26 +7,37 @@ test() ->
 execute(String) ->
     {ok, Tokens, _} = logoscanner:string(String),
     {ok, ParseTree} = logoparser:parse(Tokens),
-    run(ParseTree).
+    run(ParseTree, []).
 
-run([Instruction|Rest]) ->
-    run_instruction(Instruction),
-    run(Rest);
-run(_) -> true.
+run([Instruction|Rest], Variables) ->
+    case run_instruction(Instruction, Variables) of
+	{ok, NewVariables} -> run(Rest, NewVariables);
+	{error, _} -> io:format("There was an error on ~p\n", [Instruction])
+    end;
+run(_, Variables) -> {ok, Variables}.
 
-% Basic commands
-run_instruction({repeat, {int, _, Times}, Instructions}) -> run_instruction({repeat, Times, Instructions});
-run_instruction({repeat, 0, _}) -> true;
-run_instruction({repeat, Times, Instructions}) ->
-    run(Instructions),
+
+% Repeat
+run_instruction({repeat, {int, _, Times}, Instructions}, Variables) -> 
+    case run_instruction({repeat, Times, Instructions}, Variables) of
+	{ok, _} -> {ok, Variables};
+	Error -> Error
+    end;
+run_instruction({repeat, 0, _}, Variables) -> {ok, Variables};
+run_instruction({repeat, Times, Instructions}, Variables) ->
     NewTimes = Times - 1,
-    run_instruction({repeat, NewTimes, Instructions});
-run_instruction({Symbol, ArgumentList}) ->
+    case run(Instructions, Variables) of
+	{ok, NewVariables} ->
+	    run_instruction({repeat, NewTimes, Instructions}, NewVariables);
+	Error -> Error
+    end;
+% Basic commands
+run_instruction({Symbol, ArgumentList}, Variables) ->
     ComputedArguments = compute_arguments(ArgumentList),
     Drawer = drawer(),
     Drawer:do(Symbol, ComputedArguments);
 % Default : error
-run_instruction(Instruction) ->
+run_instruction(Instruction, _) ->
     io:format("Bad Instruction :  ~p !\n", [Instruction]).
 
 compute_arguments(List) -> compute_arguments(List, []).
