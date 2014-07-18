@@ -12,8 +12,6 @@ execute(String) ->
 run([Instruction|Rest]) ->
     run_instruction(Instruction),
     run(Rest);
-run([]) ->
-    true;
 run(_) -> true.
 
 % Basic commands
