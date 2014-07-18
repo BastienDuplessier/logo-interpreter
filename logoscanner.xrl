@@ -7,6 +7,7 @@ COMMENT = //.+
 REPEAT = REPETE
 RANDOM = HASARD
 ANGLE = CAP
+LOOP = LOOP
 
 Rules.
 
@@ -17,7 +18,9 @@ Rules.
 -{INT} : {token, {int, TokenLine, 0 - string_to_int(TokenChars)}}.
 {ANGLE} : {token, {angle, TokenLine}}.
 {RANDOM} : {token, {rand, TokenLine}}.
+{LOOP} : {token, {loop, TokenLine}}.
 {SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
+
 
 \[ : {token, {open_bracket, TokenLine}}.
 \] : {token, {close_bracket, TokenLine}}.

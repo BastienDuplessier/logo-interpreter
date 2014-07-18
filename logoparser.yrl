@@ -1,5 +1,5 @@
 Nonterminals instructions instruction arguments argument_list a_expr.
-Terminals keyword int open_bracket close_bracket plus minus multiply divide open_parent close_parent repeat rand angle.
+Terminals keyword int open_bracket close_bracket plus minus multiply divide open_parent close_parent repeat rand angle loop.
 Rootsymbol instructions.
 Left 200 plus minus.
 Left 300 multiply divide.
@@ -24,6 +24,7 @@ a_expr -> a_expr divide a_expr : {symbol_of('$2'), {'$1', '$3'}}.
 a_expr -> int : '$1'.
 a_expr -> angle : {angle}.
 a_expr -> rand a_expr : {rand, ['$2']}.
+a_expr -> loop : {loop}.
 a_expr -> open_parent a_expr close_parent : '$2'.
 
 Erlang code.
