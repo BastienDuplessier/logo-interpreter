@@ -77,7 +77,7 @@ remove(Name, [{Name, _}| Rest], Variables) -> remove(Name, Rest, Variables);
 remove(Name, [H|T], Variables) -> remove(Name, T, [H|Variables]);
 remove(_, [], Variables) -> Variables.
 
-get(Name, [{Name, Value} | _]) -> Value;
+get(Name, [{Name, Value} | _]) -> {ok, Value};
 get(Name, [_|Rest]) -> get(Name, Rest);
 get(_, []) -> {error, "This value doesn't exist"}.
 
@@ -85,6 +85,6 @@ merge(Source, Update) -> merge(Source, Update, []).
 merge([{Name, Value}|Rest], Update, Result) ->
     case get(Name, Update) of
 	{error, _} -> merge(Rest, Update, [{Name, Value}|Result]);
-	NewValue -> merge(Rest, Update, [{Name, NewValue}|Result])
+	{ok, NewValue} -> merge(Rest, Update, [{Name, NewValue}|Result])
     end;
 merge([], _, Result) -> Result.
