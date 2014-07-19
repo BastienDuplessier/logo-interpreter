@@ -80,3 +80,11 @@ remove(_, [], Variables) -> Variables.
 get(Name, [{Name, Value} | _]) -> Value;
 get(Name, [_|Rest]) -> get(Name, Rest);
 get(_, []) -> {error, "This value doesn't exist"}.
+
+merge(Source, Update) -> merge(Source, Update, []).
+merge([{Name, Value}|Rest], Update, Result) ->
+    case get(Name, Update) of
+	{error, _} -> merge(Rest, Update, [{Name, Value}|Result]);
+	NewValue -> merge(Rest, Update, [{Name, NewValue}|Result])
+    end;
+merge([], _, Result) -> Result.
