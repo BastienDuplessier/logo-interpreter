@@ -65,3 +65,18 @@ compute(multiply, A, B) -> A * B;
 compute(divide, A, B) -> trunc(A / B).
 
 drawer() -> logofakedrawer.
+
+
+% Variables management
+add({Name, Value}, Variables) ->
+    NewVariables = remove(Name, Variables),
+    [{Name, Value} | NewVariables].
+
+remove(Name, Variables) -> remove(Name, Variables, []).
+remove(Name, [{Name, _}| Rest], Variables) -> remove(Name, Rest, Variables);
+remove(Name, [H|T], Variables) -> remove(Name, T, [H|Variables]);
+remove(_, [], Variables) -> Variables.
+
+get(Name, [{Name, Value} | _]) -> Value;
+get(Name, [_|Rest]) -> get(Name, Rest);
+get(_, []) -> {error, "This value doesn't exist"}.
