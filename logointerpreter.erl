@@ -88,3 +88,10 @@ merge([{Name, Value}|Rest], Update, Result) ->
 	{ok, NewValue} -> merge(Rest, Update, [{Name, NewValue}|Result])
     end;
 merge([], _, Result) -> Result.
+
+increment(Name, Variables) -> increment(Name, Variables, []).
+increment(Name, [{Name, Value}|Rest], Result) ->
+    increment(Name, Rest, [{Name, Value + 1}|Result]);
+increment(Search, [{Name, Value}|Rest], Result) ->
+    increment(Search, Rest, [{Name, Value}|Result]);
+increment(_, [], Result) -> Result.
