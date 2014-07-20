@@ -18,9 +18,10 @@ run(_, Variables) -> {ok, Variables}.
 
 
 % Repeat
-run_instruction({repeat, {int, _, Times}, Instructions}, Variables) -> 
-    case run_instruction({repeat, Times, Instructions}, Variables) of
-	{ok, _} -> {ok, Variables};
+run_instruction({repeat, {int, _, Times}, Instructions}, Variables) ->
+    LoopVariables = add({loop, 1}, Variables),
+    case run_instruction({repeat, Times, Instructions}, LoopVariables) of
+	{ok, Result} -> {ok, merge(Variables, Result)};
 	Error -> Error
     end;
 run_instruction({repeat, 0, _}, Variables) -> {ok, Variables};
@@ -28,36 +29,41 @@ run_instruction({repeat, Times, Instructions}, Variables) ->
     NewTimes = Times - 1,
     case run(Instructions, Variables) of
 	{ok, NewVariables} ->
-	    run_instruction({repeat, NewTimes, Instructions}, NewVariables);
+	    run_instruction({repeat, NewTimes, Instructions}, increment(loop, NewVariables));
 	Error -> Error
     end;
 % Basic commands
 run_instruction({Symbol, ArgumentList}, Variables) ->
-    ComputedArguments = compute_arguments(ArgumentList),
+    ComputedArguments = compute_arguments(ArgumentList, Variables),
     Drawer = drawer(),
-    Drawer:do(Symbol, ComputedArguments);
+    Drawer:do(Symbol, ComputedArguments),
+    {ok, Variables};
 % Default : error
 run_instruction(Instruction, _) ->
     io:format("Bad Instruction :  ~p !\n", [Instruction]).
 
-compute_arguments(List) -> compute_arguments(List, []).
-compute_arguments([H|T], Result) ->
-    Argument = compute_aexpr(H),
-    compute_arguments(T, [Argument|Result]);
-compute_arguments([], Result) -> Result.
+compute_arguments(List, Variables) -> compute_arguments(List, Variables, []).
+compute_arguments([H|T], Variables, Result) ->
+    Argument = compute_aexpr(H, Variables),
+    compute_arguments(T, Variables, [Argument|Result]);
+compute_arguments([], _, Result) -> Result.
 
-compute_aexpr({rand, [Expr]}) ->
-    {int, ComputedExpr} = compute_aexpr(Expr),
+compute_aexpr({rand, [Expr]}, Variables) ->
+    {int, ComputedExpr} = compute_aexpr(Expr, Variables),
     {int, random:uniform(ComputedExpr)};
-compute_aexpr({angle}) ->
+compute_aexpr({angle}, _) ->
     Drawer = drawer(),
     Drawer:angle();
-compute_aexpr({int, _, Value}) -> {int, Value};
-compute_aexpr({Operator, {A, B}}) ->
-    {int, ComputedA} = compute_aexpr(A),
-    {int, ComputedB} = compute_aexpr(B),
+compute_aexpr({loop}, Variables) ->
+    case get(loop, Variables) of
+	{ok, Value} -> {int, Value};
+	Other ->  Other
+    end;
+compute_aexpr({int, _, Value}, _) -> {int, Value};
+compute_aexpr({Operator, {A, B}}, Variables) ->
+    {int, ComputedA} = compute_aexpr(A, Variables),
+    {int, ComputedB} = compute_aexpr(B, Variables),
     {int, compute(Operator, ComputedA, ComputedB)}.
-
 
 compute(plus, A, B) -> A + B;
 compute(minus, A, B) -> A - B;
