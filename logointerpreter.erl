@@ -18,7 +18,7 @@ run(_, Variables) -> {ok, Variables}.
 
 
 % Repeat
-run_instruction({repeat, {int, _, Times}, Instructions}, Variables) ->
+run_instruction({repeat, {number, _, Times}, Instructions}, Variables) ->
     LoopVariables = add({loop, 1}, Variables),
     case run_instruction({repeat, Times, Instructions}, LoopVariables) of
 	{ok, Result} -> {ok, merge(Variables, Result)};
