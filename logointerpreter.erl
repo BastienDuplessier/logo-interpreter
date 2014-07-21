@@ -26,10 +26,9 @@ run_instruction({repeat, {number, _, Times}, Instructions}, Variables) ->
     end;
 run_instruction({repeat, 0, _}, Variables) -> {ok, Variables};
 run_instruction({repeat, Times, Instructions}, Variables) ->
-    NewTimes = Times - 1,
     case run(Instructions, Variables) of
 	{ok, NewVariables} ->
-	    run_instruction({repeat, NewTimes, Instructions}, increment(loop, NewVariables));
+	    run_instruction({repeat, Times - 1, Instructions}, increment(loop, NewVariables));
 	Error -> Error
     end;
 % Basic commands
