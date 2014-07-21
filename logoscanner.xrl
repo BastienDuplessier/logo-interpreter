@@ -1,6 +1,6 @@
 Definitions.
 
-INT = [1-9]?[0-9]+
+NUMBER = [1-9]?[0-9]+(\.[0-9]+)?
 SYMBOL = [A-Za-z]+
 OPERATOR = [\+\-\*\/]
 COMMENT = //.+
@@ -14,8 +14,8 @@ Rules.
 {COMMENT} : skip_token.
 {REPEAT} : {token, {repeat, TokenLine}}.
 
-{INT} : {token, {int, TokenLine, string_to_int(TokenChars)}}.
--{INT} : {token, {int, TokenLine, 0 - string_to_int(TokenChars)}}.
+{NUMBER} : {token, {number, TokenLine, string_to_number(TokenChars)}}.
+-{NUMBER} : {token, {number, TokenLine, 0 - string_to_number(TokenChars)}}.
 {ANGLE} : {token, {angle, TokenLine}}.
 {RANDOM} : {token, {rand, TokenLine}}.
 {LOOP} : {token, {loop, TokenLine}}.
@@ -32,13 +32,23 @@ Rules.
 
 Erlang code.
 
-string_to_int(String) ->
-    string_to_int(String, 0).
+string_to_number(String) ->
+    string_to_number(String, 0).
 
-string_to_int([H|T], Value) ->
+string_to_number([$.|T], Value) ->
+    Value + string_to_decimals(T);
+string_to_number([H|T], Value) ->
     NewValue = (Value * 10) + char_to_int(H),
-    string_to_int(T, NewValue);
-string_to_int([], Value) -> Value.
+    string_to_number(T, NewValue);
+string_to_number([], Value) -> Value.
+
+string_to_decimals(String) ->
+    string_to_decimals(lists:reverse(String), 0).
+string_to_decimals([H|T], Value) ->
+    NewValue = Value * 0.1 + char_to_int(H),
+    string_to_decimals(T, NewValue);
+string_to_decimals([], Value) -> Value * 0.1.
+
 
 char_to_int(Char) when Char >= $0, Char =< $9 ->
     Char - $0;
