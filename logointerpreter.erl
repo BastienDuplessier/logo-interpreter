@@ -49,26 +49,26 @@ compute_arguments([H|T], Variables, Result) ->
 compute_arguments([], _, Result) -> Result.
 
 compute_aexpr({rand, [Expr]}, Variables) ->
-    {int, ComputedExpr} = compute_aexpr(Expr, Variables),
-    {int, random:uniform(ComputedExpr)};
+    {number, ComputedExpr} = compute_aexpr(Expr, Variables),
+    {number, random:uniform(ComputedExpr)};
 compute_aexpr({angle}, _) ->
     Drawer = drawer(),
     Drawer:angle();
 compute_aexpr({loop}, Variables) ->
     case get(loop, Variables) of
-	{ok, Value} -> {int, Value};
+	{ok, Value} -> {number, Value};
 	Other ->  Other
     end;
-compute_aexpr({int, _, Value}, _) -> {int, Value};
+compute_aexpr({number, _, Value}, _) -> {number, Value};
 compute_aexpr({Operator, {A, B}}, Variables) ->
-    {int, ComputedA} = compute_aexpr(A, Variables),
-    {int, ComputedB} = compute_aexpr(B, Variables),
-    {int, compute(Operator, ComputedA, ComputedB)}.
+    {number, ComputedA} = compute_aexpr(A, Variables),
+    {number, ComputedB} = compute_aexpr(B, Variables),
+    {number, compute(Operator, ComputedA, ComputedB)}.
 
 compute(plus, A, B) -> A + B;
 compute(minus, A, B) -> A - B;
 compute(multiply, A, B) -> A * B;
-compute(divide, A, B) -> trunc(A / B).
+compute(divide, A, B) -> A / B.
 
 drawer() -> logofakedrawer.
 
