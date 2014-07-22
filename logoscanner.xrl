@@ -4,21 +4,13 @@ NUMBER = [1-9]?[0-9]+(\.[0-9]+)?
 SYMBOL = [A-Za-z]+
 OPERATOR = [\+\-\*\/]
 COMMENT = //.+
-REPEAT = REPETE
-RANDOM = HASARD
-ANGLE = CAP
-LOOP = LOOP
 
 Rules.
 
 {COMMENT} : skip_token.
-{REPEAT} : {token, {repeat, TokenLine}}.
 
 {NUMBER} : {token, {number, TokenLine, string_to_number(TokenChars)}}.
 -{NUMBER} : {token, {number, TokenLine, 0 - string_to_number(TokenChars)}}.
-{ANGLE} : {token, {angle, TokenLine}}.
-{RANDOM} : {token, {rand, TokenLine}}.
-{LOOP} : {token, {loop, TokenLine}}.
 {SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
 
 
@@ -31,6 +23,11 @@ Rules.
 [\s\n\r] : skip_token.
 
 Erlang code.
+
+basic_commands() ->
+    ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC"].
+reserved_words() ->
+    ["REPETE", "HASARD", "CAP", "LOOP"].
 
 string_to_number(String) ->
     string_to_number(String, 0).
@@ -55,30 +52,22 @@ char_to_int(Char) when Char >= $0, Char =< $9 ->
 char_to_int(_) -> 0.
 
 string_to_token(String, TokenLine) ->
-    string_to_token(String, TokenLine, basic_command(String)).
-string_to_token(String, TokenLine, true) ->
-    {keyword, TokenLine, convert_keyword(String)};
-string_to_token(String, TokenLine, false) ->
-    {symbol, TokenLine, String}.
+    case {basic_command(String), reserved_word(String)} of
+	{true, _} -> {command, TokenLine, convert_command(String)};
+	{_, true} -> {convert_command(String), TokenLine};
+	_ -> {symbol, TokenLine, String}
+    end.
 
-convert_keyword(String) ->
+convert_command(String) ->
     list_to_atom(string:to_lower(String)).
+
+basic_command(String) ->
+    lists:member(String, basic_commands()).
+reserved_word(String) ->
+    lists:member(String, reserved_words()).
 
 string_to_operator("+") -> plus;
 string_to_operator("-") -> minus;
 string_to_operator("*") -> multiply;
 string_to_operator("/") -> divide.
 
-basic_command("AV") -> true;
-basic_command("TD") -> true;
-basic_command("TG") -> true;
-basic_command("REC") -> true;
-basic_command("FPOS") -> true;
-basic_command("FCAP") -> true;
-basic_command("VE") -> true;
-basic_command("MT") -> true;
-basic_command("CT") -> true;
-basic_command("LC") -> true;
-basic_command("BC") -> true;
-basic_command("FCC") -> true;
-basic_command(_) -> false.
