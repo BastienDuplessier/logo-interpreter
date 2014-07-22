@@ -64,12 +64,12 @@ compute_expr({number, _, Value}, _) -> {number, Value};
 compute_expr({Operator, {A, B}}, Variables) ->
     {number, ComputedA} = compute_expr(A, Variables),
     {number, ComputedB} = compute_expr(B, Variables),
-    {number, compute(Operator, ComputedA, ComputedB)}.
+    compute(Operator, ComputedA, ComputedB).
 
-compute(plus, A, B) -> A + B;
-compute(minus, A, B) -> A - B;
-compute(multiply, A, B) -> A * B;
-compute(divide, A, B) -> A / B.
+compute(plus, A, B) -> {number, A + B};
+compute(minus, A, B) -> {number, A - B};
+compute(multiply, A, B) -> {number, A * B};
+compute(divide, A, B) -> {number, A / B};
 
 drawer() -> logofakedrawer.
 
