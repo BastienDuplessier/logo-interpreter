@@ -33,6 +33,12 @@ run_instruction({repeat, Times, Instructions}, Variables) ->
 	    run_instruction({repeat, Times - 1, Instructions}, increment(loop, NewVariables));
 	Error -> Error
     end;
+% If
+run_instruction({'if', BoolExpr, IfTrue, IfFalse}, Variables) ->
+    case compute_expr(BoolExpr, Variables) of
+	{boolean, true} -> run(IfTrue, Variables);
+	{boolean, false} -> run(IfFalse, Variables)
+    end;
 % Basic commands
 run_instruction({Symbol, ArgumentList}, Variables) ->
     ComputedArguments = compute_arguments(ArgumentList, Variables),
@@ -70,6 +76,12 @@ compute(plus, A, B) -> {number, A + B};
 compute(minus, A, B) -> {number, A - B};
 compute(multiply, A, B) -> {number, A * B};
 compute(divide, A, B) -> {number, A / B};
+compute("=", A, B) -> {boolean, A == B};
+compute(">=", A, B) -> {boolean, A >= B};
+compute("<=", A, B) -> {boolean, A =< B};
+compute("<>", A, B) -> {boolean, A /= B};
+compute(">", A, B) -> {boolean, A > B};
+compute("<", A, B) -> {boolean, A < B}.
 
 drawer() -> logofakedrawer.
 
