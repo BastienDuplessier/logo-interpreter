@@ -15,7 +15,6 @@ instruction -> si b_expr instructions_list : {'if', '$2', '$3', []}.
 instructions_list -> open_bracket instructions close_bracket : '$2'.
 
 
-
 arguments -> '$empty' : [].
 arguments -> a_expr : ['$1'].
 arguments -> open_bracket a_expr a_expr argument_list close_bracket : ['$2','$3'|'$4'].
