@@ -45,25 +45,25 @@ run_instruction(Instruction, _) ->
 
 compute_arguments(List, Variables) -> compute_arguments(List, Variables, []).
 compute_arguments([H|T], Variables, Result) ->
-    Argument = compute_aexpr(H, Variables),
+    Argument = compute_expr(H, Variables),
     compute_arguments(T, Variables, [Argument|Result]);
 compute_arguments([], _, Result) -> Result.
 
-compute_aexpr({rand, [Expr]}, Variables) ->
-    {number, ComputedExpr} = compute_aexpr(Expr, Variables),
+compute_expr({rand, [Expr]}, Variables) ->
+    {number, ComputedExpr} = compute_expr(Expr, Variables),
     {number, random:uniform(ComputedExpr)};
-compute_aexpr({angle}, _) ->
+compute_expr({angle}, _) ->
     Drawer = drawer(),
     Drawer:angle();
-compute_aexpr({loop}, Variables) ->
+compute_expr({loop}, Variables) ->
     case get(loop, Variables) of
 	{ok, Value} -> {number, Value};
 	Other ->  Other
     end;
-compute_aexpr({number, _, Value}, _) -> {number, Value};
-compute_aexpr({Operator, {A, B}}, Variables) ->
-    {number, ComputedA} = compute_aexpr(A, Variables),
-    {number, ComputedB} = compute_aexpr(B, Variables),
+compute_expr({number, _, Value}, _) -> {number, Value};
+compute_expr({Operator, {A, B}}, Variables) ->
+    {number, ComputedA} = compute_expr(A, Variables),
+    {number, ComputedB} = compute_expr(B, Variables),
     {number, compute(Operator, ComputedA, ComputedB)}.
 
 compute(plus, A, B) -> A + B;
