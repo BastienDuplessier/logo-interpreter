@@ -9,6 +9,13 @@ Rules.
 
 {COMMENT} : skip_token.
 
+<> : {token, {b_op, TokenLine, TokenChars}}.
+>\= : {token, {b_op, TokenLine, TokenChars}}.
+<\= : {token, {b_op, TokenLine, TokenChars}}.
+> : {token, {b_op, TokenLine, TokenChars}}.
+< : {token, {b_op, TokenLine, TokenChars}}.
+\= :  {token, {b_op, TokenLine, TokenChars}}.
+
 {NUMBER} : {token, {number, TokenLine, string_to_number(TokenChars)}}.
 -{NUMBER} : {token, {number, TokenLine, 0 - string_to_number(TokenChars)}}.
 {SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
