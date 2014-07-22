@@ -12,7 +12,9 @@ execute(String) ->
 run([Instruction|Rest], Variables) ->
     case run_instruction(Instruction, Variables) of
 	{ok, NewVariables} -> run(Rest, NewVariables);
-	{error, _} -> io:format("There was an error on ~p\n", [Instruction])
+	{error, Error} ->
+	    io:format("There was an error on ~p\n", [Instruction]),
+	    {error, Error}
     end;
 run(_, Variables) -> {ok, Variables}.
 
