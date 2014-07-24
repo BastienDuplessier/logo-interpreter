@@ -67,12 +67,12 @@ compute_expr({angle}, _) ->
     {number, Drawer:angle()};
 compute_expr({loop}, Variables) ->
     case get(loop, Variables) of
-	{ok, Value} -> {number, Value};
+	{ok, Value} -> Value;
 	Other ->  Other
     end;
 compute_expr({get, Name}, Variables) ->
     case get(Name, Variables) of
-	{ok, Value} -> {number, Value};
+	{ok, Value} -> Value;
 	Error -> Error
     end;
 compute_expr({number, _, Value}, _) -> {number, Value};
