@@ -39,6 +39,10 @@ run_instruction({'if', BoolExpr, IfTrue, IfFalse}, Variables) ->
 	{boolean, true} -> run(IfTrue, Variables);
 	{boolean, false} -> run(IfFalse, Variables)
     end;
+% Variable management
+run_instruction({set, {Name, RawValue}}, Variables) ->
+    Value = compute_expr(RawValue, Variables),
+    {ok, add({Name, Value}, Variables)};
 % Basic commands
 run_instruction({Symbol, ArgumentList}, Variables) ->
     ComputedArguments = compute_arguments(ArgumentList, Variables),
@@ -65,6 +69,11 @@ compute_expr({loop}, Variables) ->
     case get(loop, Variables) of
 	{ok, Value} -> {number, Value};
 	Other ->  Other
+    end;
+compute_expr({get, Name}, Variables) ->
+    case get(Name, Variables) of
+	{ok, Value} -> {number, Value};
+	Error -> Error
     end;
 compute_expr({number, _, Value}, _) -> {number, Value};
 compute_expr({Operator, {A, B}}, Variables) ->
