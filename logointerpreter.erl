@@ -60,7 +60,7 @@ compute_expr({rand, [Expr]}, Variables) ->
     {number, random:uniform(ComputedExpr)};
 compute_expr({angle}, _) ->
     Drawer = drawer(),
-    Drawer:angle();
+    {number, Drawer:angle()};
 compute_expr({loop}, Variables) ->
     case get(loop, Variables) of
 	{ok, Value} -> {number, Value};
