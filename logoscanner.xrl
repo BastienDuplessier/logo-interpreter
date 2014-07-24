@@ -37,7 +37,7 @@ Erlang code.
 basic_commands() ->
     ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC"].
 reserved_words() ->
-    ["REPETE", "HASARD", "CAP", "LOOP", "SI", "DONNE"].
+    ["REPETE", "HASARD", "CAP", "LOOP", "SI", "DONNE", "TANTQUE"].
 
 string_to_number(String) ->
     string_to_number(String, 0).

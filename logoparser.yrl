@@ -1,5 +1,5 @@
 Nonterminals instructions instruction arguments argument_list a_expr b_expr instructions_list.
-Terminals command number open_bracket close_bracket plus minus multiply divide open_parent close_parent repete hasard cap loop b_op si donne set symbol get.
+Terminals command number open_bracket close_bracket plus minus multiply divide open_parent close_parent repete hasard cap loop b_op si donne set symbol get tantque.
 Rootsymbol instructions.
 Left 200 plus minus.
 Left 300 multiply divide.
@@ -12,6 +12,7 @@ instruction -> repete a_expr instructions_list : {repeat, '$2', '$3'}.
 instruction -> si b_expr instructions_list instructions_list : {'if', '$2', '$3', '$4'}.
 instruction -> si b_expr instructions_list : {'if', '$2', '$3', []}.
 instruction -> donne set symbol a_expr : {set, {value_of('$3'), '$4'}}.
+instruction -> tantque b_expr instructions_list : {while, '$2', '$3'}.
 
 instructions_list -> open_bracket instructions close_bracket : '$2'.
 
