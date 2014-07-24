@@ -33,6 +33,15 @@ run_instruction({repeat, Times, Instructions}, Variables) ->
 	    run_instruction({repeat, Times - 1, Instructions}, increment(loop, NewVariables));
 	Error -> Error
     end;
+% While
+run_instruction({while, StopExpr, Instructions}, Variables) ->
+    case compute_expr(StopExpr, Variables) of
+	{boolean, true} ->
+	    {ok, NewVariables} = run(Instructions, Variables),
+	    run_instruction({while, StopExpr, Instructions}, NewVariables);
+	{boolean, false} -> {ok, Variables};
+	Error -> Error
+    end;
 % If
 run_instruction({'if', BoolExpr, IfTrue, IfFalse}, Variables) ->
     case compute_expr(BoolExpr, Variables) of
