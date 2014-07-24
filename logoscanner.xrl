@@ -16,6 +16,9 @@ Rules.
 < : {token, {b_op, TokenLine, TokenChars}}.
 \= :  {token, {b_op, TokenLine, TokenChars}}.
 
+\: : {token, {get, TokenLine}}.
+\" : {token, {set, TokenLine}}.
+
 {NUMBER} : {token, {number, TokenLine, string_to_number(TokenChars)}}.
 -{NUMBER} : {token, {number, TokenLine, 0 - string_to_number(TokenChars)}}.
 {SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
@@ -34,7 +37,7 @@ Erlang code.
 basic_commands() ->
     ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC"].
 reserved_words() ->
-    ["REPETE", "HASARD", "CAP", "LOOP", "SI"].
+    ["REPETE", "HASARD", "CAP", "LOOP", "SI", "DONNE"].
 
 string_to_number(String) ->
     string_to_number(String, 0).
