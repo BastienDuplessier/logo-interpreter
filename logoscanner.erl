@@ -15,7 +15,7 @@
 -file("/home/zangther/prog/logo-interpreter/logoscanner.xrl", 35).
 
 basic_commands() ->
-    ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC"].
+    ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC", "ECRIS"].
 reserved_words() ->
     ["REPETE", "HASARD", "CAP", "LOOP", "SI", "DONNE", "TANTQUE"].
 

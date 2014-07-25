@@ -35,7 +35,7 @@ Rules.
 Erlang code.
 
 basic_commands() ->
-    ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC"].
+    ["AV", "TD", "TG", "REC", "FPOS", "FCAP", "VE", "MT", "CT", "LC", "BC", "FCC", "ECRIS"].
 reserved_words() ->
     ["REPETE", "HASARD", "CAP", "LOOP", "SI", "DONNE", "TANTQUE"].
 
