@@ -28,11 +28,11 @@ a_expr -> a_expr plus a_expr : {symbol_of('$2'), {'$1', '$3'}}.
 a_expr -> a_expr minus a_expr : {symbol_of('$2'), {'$1', '$3'}}.
 a_expr -> a_expr multiply a_expr : {symbol_of('$2'), {'$1', '$3'}}.
 a_expr -> a_expr divide a_expr : {symbol_of('$2'), {'$1', '$3'}}.
-a_expr -> get symbol : {get, value_of('$2')}.
 a_expr -> number : '$1'.
 a_expr -> cap : {angle}.
 a_expr -> hasard a_expr : {rand, ['$2']}.
 a_expr -> loop : {loop}.
+a_expr -> get symbol : {get, value_of('$2')}.
 a_expr -> open_parent a_expr close_parent : '$2'.
 
 b_expr -> a_expr b_op a_expr : {value_of('$2'), {'$1', '$3'}}.

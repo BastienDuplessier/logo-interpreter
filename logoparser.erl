@@ -758,7 +758,7 @@ yeccpars2_3_(__Stack0) ->
   end | __Stack0].
 
 -compile({inline,yeccpars2_10_/1}).
--file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 29).
+-file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 28).
 yeccpars2_10_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -766,7 +766,7 @@ yeccpars2_10_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_13_/1}).
--file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 31).
+-file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 30).
 yeccpars2_13_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -814,7 +814,7 @@ yeccpars2_25_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_26_/1}).
--file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 30).
+-file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 29).
 yeccpars2_26_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -822,7 +822,7 @@ yeccpars2_26_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_27_/1}).
--file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 27).
+-file("/home/zangther/prog/logo-interpreter/logoparser.yrl", 31).
 yeccpars2_27_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
