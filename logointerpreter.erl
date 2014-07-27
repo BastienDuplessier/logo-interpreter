@@ -71,35 +71,55 @@ compute_arguments([], _, Result) -> Result.
 compute_expr({rand, [Expr]}, Variables) ->
     {number, ComputedExpr} = compute_expr(Expr, Variables),
     {number, random:uniform(ComputedExpr)};
+compute_expr({{a_op, _, Op}, {A, B}}, Variables) ->
+    compute_expr({Op, {A, B}}, Variables);
 compute_expr({angle}, _) ->
     Drawer = drawer(),
     {number, Drawer:angle()};
+compute_expr({pi}, _) ->
+    {number, math:pi()};
 compute_expr({loop}, Variables) ->
     case get(loop, Variables) of
 	{ok, Value} -> Value;
 	Other ->  Other
     end;
+compute_expr({fact, Value}, Variables) ->
+    {number, N} = compute_expr(Value, Variables),
+    lists:foldl(fun(X, F) -> X * F end, 1, lists:seq(1, trunc(N)));
 compute_expr({get, Name}, Variables) ->
     case get(Name, Variables) of
 	{ok, Value} -> Value;
 	Error -> Error
     end;
+compute_expr({{a_func, _, Op}, RawValue}, Variables) ->
+    {number, Value} = compute_expr(RawValue, Variables),
+    compute(Op, {Value});
 compute_expr({number, _, Value}, _) -> {number, Value};
 compute_expr({Operator, {A, B}}, Variables) ->
     {number, ComputedA} = compute_expr(A, Variables),
     {number, ComputedB} = compute_expr(B, Variables),
-    compute(Operator, ComputedA, ComputedB).
+    compute(Operator, {ComputedA, ComputedB}).
 
-compute(plus, A, B) -> {number, A + B};
-compute(minus, A, B) -> {number, A - B};
-compute(multiply, A, B) -> {number, A * B};
-compute(divide, A, B) -> {number, A / B};
-compute("=", A, B) -> {boolean, A == B};
-compute(">=", A, B) -> {boolean, A >= B};
-compute("<=", A, B) -> {boolean, A =< B};
-compute("<>", A, B) -> {boolean, A /= B};
-compute(">", A, B) -> {boolean, A > B};
-compute("<", A, B) -> {boolean, A < B}.
+compute(plus, {A, B}) -> {number, A + B};
+compute(minus, {A, B}) -> {number, A - B};
+compute(multiply, {A, B}) -> {number, A * B};
+compute(divide, {A, B}) -> {number, A / B};
+compute('div', {A, B}) -> {number, A div B};
+compute(mod, {A, B}) -> {number, A rem B};
+compute("=", {A, B}) -> {boolean, A == B};
+compute(">=", {A, B}) -> {boolean, A >= B};
+compute("<=", {A, B}) -> {boolean, A =< B};
+compute("<>", {A, B}) -> {boolean, A /= B};
+compute(">", {A, B}) -> {boolean, A > B};
+compute("<", {A, B}) -> {boolean, A < B};
+compute("SQRT", {A}) -> {number, math:sqrt(A)};
+compute("SIN", {A}) -> {number, math:sin(A)};
+compute("COS", {A}) -> {number, math:cos(A)};
+compute("EXP", {A}) -> {number, math:exp(A)};
+compute("LOG", {A}) -> {number, math:log(A)};
+compute("ABS", {A}) when A >= 0 -> {number, A};
+compute("ABS", {A}) -> {number, -A};
+compute("TAN", {A}) -> {number, math:tan(A)}.
 
 drawer() -> logofakedrawer.
 
