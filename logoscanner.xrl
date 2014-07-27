@@ -2,7 +2,7 @@ Definitions.
 
 NUMBER = [1-9]?[0-9]+(\.[0-9]+)?
 SYMBOL = [A-Za-z]+
-OPERATOR = [\+\-\*\/]
+OPERATOR = [\+\-\*\/!]
 COMMENT = //.+
 
 Rules.
@@ -19,10 +19,21 @@ Rules.
 \: : {token, {get, TokenLine}}.
 \" : {token, {set, TokenLine}}.
 
+DIV : {token, {a_op, TokenLine, 'div'}}.
+MOD : {token, {a_op, TokenLine, mod}}.
+
+SQRT : {token, {a_func, TokenLine, TokenChars}}.
+SIN : {token, {a_func, TokenLine, TokenChars}}.
+COS : {token, {a_func, TokenLine, TokenChars}}.
+EXP : {token, {a_func, TokenLine, TokenChars}}.
+LOG : {token, {a_func, TokenLine, TokenChars}}.
+ABS : {token, {a_func, TokenLine, TokenChars}}.
+TAN : {token, {a_func, TokenLine, TokenChars}}.
+PI : {token, {pi, TokenLine}}.
+
 {NUMBER} : {token, {number, TokenLine, string_to_number(TokenChars)}}.
 -{NUMBER} : {token, {number, TokenLine, 0 - string_to_number(TokenChars)}}.
 {SYMBOL} : {token, string_to_token(TokenChars, TokenLine)}.
-
 
 \[ : {token, {open_bracket, TokenLine}}.
 \] : {token, {close_bracket, TokenLine}}.
@@ -79,5 +90,6 @@ reserved_word(String) ->
 string_to_operator("+") -> plus;
 string_to_operator("-") -> minus;
 string_to_operator("*") -> multiply;
-string_to_operator("/") -> divide.
+string_to_operator("/") -> divide;
+string_to_operator("!") -> fact.
 
