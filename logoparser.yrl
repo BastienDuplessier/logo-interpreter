@@ -1,6 +1,10 @@
 Nonterminals instructions instruction arguments argument_list a_expr b_expr instructions_list.
-Terminals command number open_bracket close_bracket plus minus multiply divide open_parent close_parent repete hasard cap loop b_op si donne set symbol get tantque a_op pi a_func fact.
+Terminals command number open_bracket close_bracket plus minus multiply divide open_parent close_parent repete hasard cap loop b_op si donne set symbol get tantque a_op pi a_func fact b_comp.
+
 Rootsymbol instructions.
+
+Left 100 b_comp.
+Left 150 b_op.
 Left 200 plus minus.
 Left 300 multiply divide.
 Left 400 a_op.
@@ -41,7 +45,10 @@ a_expr -> loop : {loop}.
 a_expr -> a_func a_expr : {'$1', '$2'}.
 a_expr -> get symbol : {get, value_of('$2')}.
 a_expr -> open_parent a_expr close_parent : '$2'.
+
 b_expr -> a_expr b_op a_expr : {value_of('$2'), {'$1', '$3'}}.
+b_expr -> b_expr b_comp b_expr : {value_of('$2'), {'$1', '$3'}}.
+b_expr -> open_parent b_expr close_parent : '$2'.
 
 Erlang code.
 value_of({_, _, Value}) -> Value.

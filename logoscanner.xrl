@@ -15,6 +15,8 @@ Rules.
 > : {token, {b_op, TokenLine, TokenChars}}.
 < : {token, {b_op, TokenLine, TokenChars}}.
 \= :  {token, {b_op, TokenLine, TokenChars}}.
+\& : {token, {b_comp, TokenLine, TokenChars}}.
+\| : {token, {b_comp, TokenLine, TokenChars}}.
 
 \: : {token, {get, TokenLine}}.
 \" : {token, {set, TokenLine}}.

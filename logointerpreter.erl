@@ -96,8 +96,8 @@ compute_expr({{a_func, _, Op}, RawValue}, Variables) ->
     compute(Op, {Value});
 compute_expr({number, _, Value}, _) -> {number, Value};
 compute_expr({Operator, {A, B}}, Variables) ->
-    {number, ComputedA} = compute_expr(A, Variables),
-    {number, ComputedB} = compute_expr(B, Variables),
+    {_, ComputedA} = compute_expr(A, Variables),
+    {_, ComputedB} = compute_expr(B, Variables),
     compute(Operator, {ComputedA, ComputedB}).
 
 compute(plus, {A, B}) -> {number, A + B};
@@ -119,7 +119,9 @@ compute("EXP", {A}) -> {number, math:exp(A)};
 compute("LOG", {A}) -> {number, math:log(A)};
 compute("ABS", {A}) when A >= 0 -> {number, A};
 compute("ABS", {A}) -> {number, -A};
-compute("TAN", {A}) -> {number, math:tan(A)}.
+compute("TAN", {A}) -> {number, math:tan(A)};
+compute("&", {A, B}) -> {boolean, A and B};
+compute("|", {A, B}) -> {boolean, A or B}.
 
 drawer() -> logofakedrawer.
 
