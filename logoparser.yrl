@@ -1,7 +1,7 @@
-Nonterminals instructions instruction arguments argument_list a_expr b_expr instructions_list.
-Terminals command number open_bracket close_bracket plus minus multiply divide open_parent close_parent repete hasard cap loop b_op si donne set symbol get tantque a_op pi a_func fact b_comp.
+Nonterminals program functions function params instructions instruction arguments argument_list a_expr b_expr instructions_list.
+Terminals command number open_bracket close_bracket plus minus multiply divide open_parent close_parent repete hasard cap loop b_op si donne set symbol get tantque a_op pi a_func fact b_comp pour fin ret.
 
-Rootsymbol instructions.
+Rootsymbol program.
 
 Left 100 b_comp.
 Left 150 b_op.
@@ -9,6 +9,16 @@ Left 200 plus minus.
 Left 300 multiply divide.
 Left 400 a_op.
 Unary 500 fact.
+
+program -> functions instructions : {'$1', '$2'}.
+
+functions -> function functions : ['$1'|'$2'].
+functions -> '$empty' : [].
+
+function -> pour symbol params instructions fin : {func, '$2', '$3', '$4'}.
+
+params -> get symbol params : ['$2'|'$3'].
+params -> '$empty' : [].
 
 instructions -> instruction instructions : ['$1'|'$2'].
 instructions -> '$empty' : [].
@@ -19,6 +29,7 @@ instruction -> si b_expr instructions_list instructions_list : {'if', '$2', '$3'
 instruction -> si b_expr instructions_list : {'if', '$2', '$3', []}.
 instruction -> donne set symbol a_expr : {set, {value_of('$3'), '$4'}}.
 instruction -> tantque b_expr instructions_list : {while, '$2', '$3'}.
+instruction -> ret a_expr : {ret, '$2'}.
 
 instructions_list -> open_bracket instructions close_bracket : '$2'.
 
