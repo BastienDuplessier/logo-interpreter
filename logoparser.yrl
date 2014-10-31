@@ -15,7 +15,7 @@ program -> functions instructions : {'$1', '$2'}.
 functions -> function functions : ['$1'|'$2'].
 functions -> '$empty' : [].
 
-function -> pour symbol params instructions fin : {func, '$2', '$3', '$4'}.
+function -> pour symbol params instructions fin : {'$2', '$3', '$4'}.
 
 params -> get symbol params : ['$2'|'$3'].
 params -> '$empty' : [].

@@ -1375,7 +1375,7 @@ yeccpars2_74_(__Stack0) ->
 yeccpars2_75_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { func , __2 , __3 , __4 }
+   { __2 , __3 , __4 }
   end | __Stack].
 
 -compile({inline,yeccpars2_76_/1}).
