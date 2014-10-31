@@ -7,97 +7,101 @@ test() ->
 execute(String) ->
     {ok, Tokens, _} = logoscanner:string(String),
     {ok, ParseTree} = logoparser:parse(Tokens),
-    run(ParseTree, []).
+    {ok, Functions, Instructions} = prepare(ParseTree),
+    run(Instructions, [], Functions).
 
-run([Instruction|Rest], Variables) ->
-    case run_instruction(Instruction, Variables) of
-	{ok, NewVariables} -> run(Rest, NewVariables);
+prepare({Functions, Instructions}) ->
+    {ok, Functions, Instructions}.
+
+run([Instruction|Rest], Variables, Functions) ->
+    case run_instruction(Instruction, Variables, Functions) of
+	{ok, NewVariables} -> run(Rest, NewVariables, Functions);
 	{error, Error} ->
 	    io:format("There was an error on ~p\n", [Instruction]),
 	    {error, Error}
     end;
-run(_, Variables) -> {ok, Variables}.
+run(_, Variables, _) -> {ok, Variables}.
 
 
 % Repeat
-run_instruction({repeat, {number, _, Times}, Instructions}, Variables) ->
+run_instruction({repeat, {number, _, Times}, Instructions}, Variables, Functions) ->
     LoopVariables = add({loop, 1}, Variables),
-    case run_instruction({repeat, Times, Instructions}, LoopVariables) of
+    case run_instruction({repeat, Times, Instructions}, LoopVariables, Functions) of
 	{ok, Result} -> {ok, merge(Variables, Result)};
 	Error -> Error
     end;
-run_instruction({repeat, 0, _}, Variables) -> {ok, Variables};
-run_instruction({repeat, Times, Instructions}, Variables) ->
-    case run(Instructions, Variables) of
+run_instruction({repeat, 0, _}, Variables, _) -> {ok, Variables};
+run_instruction({repeat, Times, Instructions}, Variables, Functions) ->
+    case run(Instructions, Variables, Functions) of
 	{ok, NewVariables} ->
-	    run_instruction({repeat, Times - 1, Instructions}, increment(loop, NewVariables));
+	    run_instruction({repeat, Times - 1, Instructions}, increment(loop, NewVariables), Functions);
 	Error -> Error
     end;
 % While
-run_instruction({while, StopExpr, Instructions}, Variables) ->
-    case compute_expr(StopExpr, Variables) of
+run_instruction({while, StopExpr, Instructions}, Variables, Functions) ->
+    case compute_expr(StopExpr, Variables, Functions) of
 	{boolean, true} ->
-	    {ok, NewVariables} = run(Instructions, Variables),
-	    run_instruction({while, StopExpr, Instructions}, NewVariables);
+	    {ok, NewVariables} = run(Instructions, Variables, Functions),
+	    run_instruction({while, StopExpr, Instructions}, NewVariables, Functions);
 	{boolean, false} -> {ok, Variables};
 	Error -> Error
     end;
 % If
-run_instruction({'if', BoolExpr, IfTrue, IfFalse}, Variables) ->
-    case compute_expr(BoolExpr, Variables) of
-	{boolean, true} -> run(IfTrue, Variables);
-	{boolean, false} -> run(IfFalse, Variables)
+run_instruction({'if', BoolExpr, IfTrue, IfFalse}, Variables, Functions) ->
+    case compute_expr(BoolExpr, Variables, Functions) of
+	{boolean, true} -> run(IfTrue, Variables, Functions);
+	{boolean, false} -> run(IfFalse, Variables, Functions)
     end;
 % Variable management
-run_instruction({set, {Name, RawValue}}, Variables) ->
-    Value = compute_expr(RawValue, Variables),
+run_instruction({set, {Name, RawValue}}, Variables, Functions) ->
+    Value = compute_expr(RawValue, Variables, Functions),
     {ok, add({Name, Value}, Variables)};
 % Basic commands
-run_instruction({Symbol, ArgumentList}, Variables) ->
-    ComputedArguments = compute_arguments(ArgumentList, Variables),
+run_instruction({Symbol, ArgumentList}, Variables, Functions) ->
+    ComputedArguments = compute_arguments(ArgumentList, Variables, Functions),
     Drawer = drawer(),
     Drawer:do(Symbol, ComputedArguments),
     {ok, Variables};
 % Default : error
-run_instruction(Instruction, _) ->
+run_instruction(Instruction, _, _) ->
     io:format("Bad Instruction :  ~p !\n", [Instruction]).
 
-compute_arguments(List, Variables) -> compute_arguments(List, Variables, []).
-compute_arguments([H|T], Variables, Result) ->
-    Argument = compute_expr(H, Variables),
-    compute_arguments(T, Variables, [Argument|Result]);
-compute_arguments([], _, Result) -> Result.
+compute_arguments(List, Variables, Functions) -> compute_arguments(List, Variables, Functions, []).
+compute_arguments([H|T], Variables, Functions, Result) ->
+    Argument = compute_expr(H, Variables, Functions),
+    compute_arguments(T, Variables, Functions, [Argument|Result]);
+compute_arguments([], _, _, Result) -> Result.
 
-compute_expr({rand, [Expr]}, Variables) ->
-    {number, ComputedExpr} = compute_expr(Expr, Variables),
+compute_expr({rand, [Expr]}, Variables, Functions) ->
+    {number, ComputedExpr} = compute_expr(Expr, Variables, Functions),
     {number, random:uniform(ComputedExpr)};
-compute_expr({{a_op, _, Op}, {A, B}}, Variables) ->
-    compute_expr({Op, {A, B}}, Variables);
-compute_expr({angle}, _) ->
+compute_expr({{a_op, _, Op}, {A, B}}, Variables, Functions) ->
+    compute_expr({Op, {A, B}}, Variables, Functions);
+compute_expr({angle}, _, _) ->
     Drawer = drawer(),
     {number, Drawer:angle()};
-compute_expr({pi}, _) ->
+compute_expr({pi}, _, _) ->
     {number, math:pi()};
-compute_expr({loop}, Variables) ->
+compute_expr({loop}, Variables, _) ->
     case get(loop, Variables) of
 	{ok, Value} -> Value;
 	Other ->  Other
     end;
-compute_expr({fact, Value}, Variables) ->
-    {number, N} = compute_expr(Value, Variables),
+compute_expr({fact, Value}, Variables, Functions) ->
+    {number, N} = compute_expr(Value, Variables, Functions),
     lists:foldl(fun(X, F) -> X * F end, 1, lists:seq(1, trunc(N)));
-compute_expr({get, Name}, Variables) ->
+compute_expr({get, Name}, Variables, _) ->
     case get(Name, Variables) of
 	{ok, Value} -> Value;
 	Error -> Error
     end;
-compute_expr({{a_func, _, Op}, RawValue}, Variables) ->
-    {number, Value} = compute_expr(RawValue, Variables),
+compute_expr({{a_func, _, Op}, RawValue}, Variables, Functions) ->
+    {number, Value} = compute_expr(RawValue, Variables, Functions),
     compute(Op, {Value});
-compute_expr({number, _, Value}, _) -> {number, Value};
-compute_expr({Operator, {A, B}}, Variables) ->
-    {_, ComputedA} = compute_expr(A, Variables),
-    {_, ComputedB} = compute_expr(B, Variables),
+compute_expr({number, _, Value}, _, _) -> {number, Value};
+compute_expr({Operator, {A, B}}, Variables, Functions) ->
+    {_, ComputedA} = compute_expr(A, Variables, Functions),
+    {_, ComputedB} = compute_expr(B, Variables, Functions),
     compute(Operator, {ComputedA, ComputedB}).
 
 compute(plus, {A, B}) -> {number, A + B};
