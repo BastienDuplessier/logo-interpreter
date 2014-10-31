@@ -1,8 +1,5 @@
 -module(logointerpreter).
--export([test/0, execute/1]).
-
-test() ->
-    execute("AV (23 + 43 * (34 + 54)) / 10").
+-export([execute/1]).
 
 execute(String) ->
     {ok, Tokens, _} = logoscanner:string(String),
