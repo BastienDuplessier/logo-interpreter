@@ -1,5 +1,6 @@
-AV 10
-TD 10
-AV 20
-TG 10
-LC
+POUR carre :c
+     RET :c * :c
+FIN
+
+DONNE "a 5
+ECRIS carre :5
