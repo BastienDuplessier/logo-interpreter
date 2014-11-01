@@ -29,4 +29,7 @@ bc([]) ->
 fcc([X]) ->
     io:format("Change color to ~p\n", [X]).
 angle() -> 0.
-ecris([String]) -> io:format("~p\n", [String]).
+ecris([{_, Value}|Rest]) ->
+    io:format("~p\n", [Value]),
+    ecris(Rest);
+ecris([]) -> ok.
