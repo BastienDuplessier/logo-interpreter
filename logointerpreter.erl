@@ -1,5 +1,8 @@
 -module(logointerpreter).
--export([execute/1, file/1]).
+-export([execute/1, file/1, test/0]).
+
+test() ->
+    file("sample.logo").
 
 file(Filename) ->
     {ok, File} = file:read_file(Filename),
