@@ -3,4 +3,4 @@ POUR carre :c
 FIN
 
 DONNE "a 5
-ECRIS carre :5
+ECRIS :a
