@@ -1,5 +1,12 @@
 -module(logointerpreter).
--export([execute/1]).
+-export([execute/1, file/1]).
+
+file(Filename) ->
+    {ok, File} = file:read_file(Filename),
+    case unicode:characters_to_list(File) of
+	{_, _, _} -> io:format("Your file is crap, go fuck yourself");
+	Result -> execute(Result)
+    end.
 
 execute(String) ->
     {ok, Tokens, _} = logoscanner:string(String),
